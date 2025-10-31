@@ -47,7 +47,7 @@ cmake --build . --parallel
 
 **seed = 1, grid_size = 40**
 
-|  | Nodes Explored | Path length | Path Cost |
+| | Nodes Explored | Path length | Path Cost |
 | :--: |  :------------- | :-- | : -- |
 | DFS | 1409 | 629 | 9966 |
 | BFS | 1568 | 61 | 589 |
