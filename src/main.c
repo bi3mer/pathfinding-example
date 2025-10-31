@@ -1,80 +1,121 @@
+#include "da.h"
+#include "grid.h"
+#include "pathfinding.h"
+#include "point.h"
 #include "raylib.h"
-#include "terrain.h"
+
+#include <stddef.h>
 #include <time.h>
-
-#define GRID_SIZE 100
-#define CELL_SIZE 10
-
-extern float stb_perlin_noise3(float x, float y, float z, int x_wrap,
-                               int y_wrap, int z_wrap);
-
-typedef struct
-{
-    int x, y;
-} Point;
 
 int main(void)
 {
-    const int screen_width = GRID_SIZE * CELL_SIZE;
-    const int screen_height = GRID_SIZE * CELL_SIZE;
+    Grid grid;
+    PathfindingState path_state;
+
+    const int grid_size = 40;
+    const int cell_size = 10;
+    const int screen_width = grid_size * cell_size;
+    const int screen_height = grid_size * cell_size;
+    const Point src = {5, 5};
+    const Point tgt = {grid_size - 5, grid_size - 5};
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screen_width, screen_height, "Pathfinding Example");
 
     SetTargetFPS(60);
 
-    /////////////////////// Generate Map ///////////////////////
-    SetRandomSeed(time(NULL));
+    // set up grid that we will be pathfinding on
+    SetRandomSeed(1);
+    grid_init(&grid, (Point){grid_size, grid_size});
+    grid_perlin_terrain(
+        &grid, 20.f, (Point){GetRandomValue(0, 100), GetRandomValue(0, 100)});
 
-    const float offset_x = GetRandomValue(0, 10000) / 100.0f;
-    const float offset_y = GetRandomValue(0, 10000) / 100.0f;
+    // set up pathfiding state
+    pathfinding_init(&path_state, &grid, src, tgt);
+    bfs(&path_state);
 
-    Terrain_Type grid[GRID_SIZE][GRID_SIZE];
-    float scale = 20.0f;
-
-    for (int y = 0; y < GRID_SIZE; y++)
-    {
-        for (int x = 0; x < GRID_SIZE; x++)
-        {
-            float noiseValue = stb_perlin_noise3(
-                (x + offset_x) / scale, (y + offset_y) / scale, 0.0f, 0, 0, 0);
-
-            grid[y][x] = noise_to_terrain((noiseValue + 1.0f) * 0.5f);
-        }
-    }
-
-    const Point src = {15, 15};
-    const Point tgt = {GRID_SIZE - 15, GRID_SIZE - 15};
-
-    /////////////////////// Pathfinding ///////////////////////
+    size_t animated_path_length = 1;
 
     while (!WindowShouldClose())
     {
         /////////////////////// Update ///////////////////////
+        // if (!path_state.found)
+        // {
+        //     bfs_step(&path_state);
+        // }
 
         /////////////////////// Draw ///////////////////////
         BeginDrawing();
         ClearBackground(BLACK);
 
-        for (int y = 0; y < GRID_SIZE; y++)
+        for (int y = 0; y < grid_size; y++)
         {
-            for (int x = 0; x < GRID_SIZE; x++)
+            for (int x = 0; x < grid_size; x++)
             {
-                DrawRectangle(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE,
-                              CELL_SIZE, terrain_to_color(grid[y][x]));
+                DrawRectangle(x * cell_size, y * cell_size, cell_size,
+                              cell_size,
+                              terrain_to_color(grid_at(&grid, x, y)));
+
+                int idx = y * grid.dimensions.x + x;
+                if (path_state.explored[idx].x != -1)
+                {
+                    DrawRectangle(x * cell_size, y * cell_size, cell_size,
+                                  cell_size, (Color){100, 0, 0, 100});
+                }
             }
         }
 
-        DrawRectangle(src.x * CELL_SIZE, src.y * CELL_SIZE, CELL_SIZE,
-                      CELL_SIZE, GREEN);
-        DrawRectangle(tgt.x * CELL_SIZE, tgt.y * CELL_SIZE, CELL_SIZE,
-                      CELL_SIZE, RED);
+        DrawRectangle(src.x * cell_size, src.y * cell_size, cell_size,
+                      cell_size, GREEN);
+        DrawRectangle(tgt.x * cell_size, tgt.y * cell_size, cell_size,
+                      cell_size, RED);
 
-        DrawFPS(10, 10);
+        if (path_state.found)
+        {
+            for (size_t i = 0;
+                 i < animated_path_length && i < da_length(path_state.path) - 1;
+                 i++)
+            {
+                Vector2 start = {
+                    path_state.path[i].x * cell_size + cell_size / 2,
+                    path_state.path[i].y * cell_size + cell_size / 2};
+
+                Vector2 end = {
+                    path_state.path[i + 1].x * cell_size + cell_size / 2,
+                    path_state.path[i + 1].y * cell_size + cell_size / 2};
+
+                DrawLineEx(start, end, 3.0f, YELLOW);
+            }
+
+            ++animated_path_length;
+        }
+
         EndDrawing();
     }
 
     CloseWindow();
+
+    size_t explored_cells = 0;
+    for (size_t i = 0; i < grid_size * grid_size; ++i)
+    {
+        explored_cells += path_state.explored[i].x != -1;
+    }
+
+    float path_cost = 0;
+    const size_t path_length = da_length(path_state.path);
+    Point p;
+    for (size_t i = 0; i < path_length; ++i)
+    {
+        p = path_state.path[i];
+        path_cost += terrain_to_cost(grid_at(&grid, p.x, p.y));
+    }
+
+    printf("Cells explored: %lu\n", explored_cells);
+    printf("Path Length: %lu\n", path_length);
+    printf("Path Cost: %f\n", path_cost);
+
+    grid_cleanup(&grid);
+    pathfinding_cleanup(&path_state);
 
     return 0;
 }
