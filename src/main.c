@@ -46,6 +46,8 @@ int main(void)
     const Point src = {15, 15};
     const Point tgt = {GRID_SIZE - 15, GRID_SIZE - 15};
 
+    /////////////////////// Pathfinding ///////////////////////
+
     while (!WindowShouldClose())
     {
         /////////////////////// Update ///////////////////////
@@ -64,7 +66,7 @@ int main(void)
         }
 
         DrawRectangle(src.x * CELL_SIZE, src.y * CELL_SIZE, CELL_SIZE,
-                      CELL_SIZE, RED);
+                      CELL_SIZE, GREEN);
         DrawRectangle(tgt.x * CELL_SIZE, tgt.y * CELL_SIZE, CELL_SIZE,
                       CELL_SIZE, RED);
 
