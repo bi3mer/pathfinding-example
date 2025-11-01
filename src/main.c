@@ -1,3 +1,4 @@
+#include "astar.h"
 #include "da.h"
 #include "grid.h"
 #include "pathfinding.h"
@@ -13,7 +14,8 @@ int main(void)
     int x, y;
 
     Grid grid;
-    PathfindingState path_state;
+    // PathfindingState path_state;
+    AStarState path_state;
 
     animated_path_length = 1;
 
@@ -31,20 +33,23 @@ int main(void)
         &grid, 20.f, (Point){GetRandomValue(0, 100), GetRandomValue(0, 100)});
 
     // set up pathfiding state
-    pathfinding_init(&path_state, &grid, src, tgt);
+    // pathfinding_init(&path_state, &grid, src, tgt);
+    // astar_state_init(&path_state, &grid, src, tgt, point_manhattan_distance);
+    astar_state_init(&path_state, &grid, src, tgt, point_euclidian_distance);
+
     // bfs(&path_state);
 
     // raylib set up
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screen_width, screen_height, "Pathfinding Example");
-    SetTargetFPS(60);
+    SetTargetFPS(120);
 
     while (!WindowShouldClose())
     {
         /////////////////////// Update ///////////////////////
         if (!path_state.found)
         {
-            // bfs_step(&path_state);
+            astar_step(&path_state);
         }
 
         /////////////////////// Draw ///////////////////////
@@ -118,7 +123,8 @@ int main(void)
     printf("Path Cost: %f\n", path_cost);
 
     grid_cleanup(&grid);
-    pathfinding_cleanup(&path_state);
+    // pathfinding_cleanup(&path_state);
+    astar_state_cleanup(&path_state);
 
     return 0;
 }
