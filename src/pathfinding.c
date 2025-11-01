@@ -45,6 +45,7 @@ void pathfinding_cleanup(PathfindingState *state)
         state->came_from = NULL;
 
         state->grid = NULL;
+        state->found = false;
     }
 }
 

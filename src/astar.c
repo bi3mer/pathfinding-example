@@ -51,9 +51,18 @@ void astar_state_cleanup(AStarState *state)
     if (state)
     {
         da_cleanup(state->queue);
+        state->queue = NULL;
+
         da_cleanup(state->path);
+        state->path = NULL;
+
         free(state->came_from);
+        state->came_from = NULL;
+
         free(state->cost_so_far);
+        state->cost_so_far = NULL;
+
+        state->found = false;
     }
 }
 

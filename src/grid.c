@@ -27,8 +27,7 @@ void grid_perlin_terrain(Grid *grid, float scale, Point offset)
         for (int x = 0; x < grid->dimensions.x; x++)
         {
             float noiseValue = stb_perlin_noise3(
-                (x + offset.x / 100.0f) / scale,
-                (y + offset.y / 100.0f) / scale, 0.0f, 0, 0, 0);
+                (x + offset.x) / scale, (y + offset.y) / scale, 0.0f, 0, 0, 0);
 
             grid->grid[y * grid->dimensions.x + x] =
                 noise_to_terrain((noiseValue + 1.0f) * 0.5f);
