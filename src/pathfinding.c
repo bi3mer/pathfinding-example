@@ -1,7 +1,7 @@
 #include "pathfinding.h"
 #include "da.h"
 #include "grid.h"
-#include "terrain.h"
+#include "point.h"
 
 void pathfinding_init(PathfindingState *state, Grid *grid, Point src, Point tgt)
 {
@@ -16,13 +16,11 @@ void pathfinding_init(PathfindingState *state, Grid *grid, Point src, Point tgt)
 
     const size_t grid_size = (size_t)(grid->dimensions.x * grid->dimensions.y);
     state->explored = malloc(sizeof(Point) * grid_size);
-    state->costs = malloc(sizeof(float) * grid_size);
 
     for (size_t i = 0; i < grid_size; i++)
     {
         state->explored[i].x = -1;
         state->explored[i].y = -1;
-        state->costs[i] = terrain_to_cost(grid->grid[i]);
     }
 
     state->queue[0] = src;
@@ -30,7 +28,6 @@ void pathfinding_init(PathfindingState *state, Grid *grid, Point src, Point tgt)
 
     const size_t src_idx = (size_t)(src.y * grid->dimensions.x + src.x);
     state->explored[src_idx] = src;
-    state->costs[src_idx] = 0.0f;
 }
 
 void pathfinding_cleanup(PathfindingState *state)
@@ -45,9 +42,6 @@ void pathfinding_cleanup(PathfindingState *state)
 
         free(state->explored);
         state->explored = NULL;
-
-        free(state->costs);
-        state->costs = NULL;
 
         state->grid = NULL;
     }

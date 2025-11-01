@@ -55,23 +55,27 @@ size_t grid_neighbors(Grid *grid, Point p, Point out[4])
         out[count].y = p.y;
         ++count;
     }
+
     if (p.x < grid->dimensions.x - 1)
     {
         out[count].x = p.x + 1;
         out[count].y = p.y;
         ++count;
     }
+
     if (p.y > 0)
     {
         out[count].x = p.x;
         out[count].y = p.y - 1;
         ++count;
     }
+
     if (p.y < grid->dimensions.y - 1)
     {
         out[count].x = p.x;
         out[count].y = p.y + 1;
         ++count;
     }
+
     return count;
 }

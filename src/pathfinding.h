@@ -9,7 +9,6 @@ typedef struct
     Point *queue;
     Point *path;
     Point *explored;
-    float *costs;
     Grid *grid;
     Point src, tgt;
     bool found;

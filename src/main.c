@@ -32,7 +32,7 @@ int main(void)
 
     // set up pathfiding state
     pathfinding_init(&path_state, &grid, src, tgt);
-    bfs(&path_state);
+    // bfs(&path_state);
 
     // raylib set up
     SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -42,10 +42,10 @@ int main(void)
     while (!WindowShouldClose())
     {
         /////////////////////// Update ///////////////////////
-        // if (!path_state.found)
-        // {
-        //     bfs_step(&path_state);
-        // }
+        if (!path_state.found)
+        {
+            dfs_step(&path_state);
+        }
 
         /////////////////////// Draw ///////////////////////
         BeginDrawing();
