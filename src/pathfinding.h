@@ -10,8 +10,8 @@ typedef struct
     Point *path;
     Point *came_from;
     Grid *grid;
-    Point src, tgt;
     bool found;
+    Point src, tgt;
 } PathfindingState;
 
 extern void pathfinding_init(PathfindingState *state, Grid *grid, Point src,

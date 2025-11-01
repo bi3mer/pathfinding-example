@@ -3,26 +3,28 @@
 
 #include "grid.h"
 
+typedef float (*Heuristic_Func)(const Point a, const Point b);
+
 typedef struct
 {
-    float f_score;
     Point point;
+    float priority;
 } AStarNode;
 
 typedef struct
 {
     Grid *grid;
-    Point src;
-    Point tgt;
-    AStarNode *open_set;
+    AStarNode *queue;
     Point *came_from;
-    float *g_score;
-    bool *closed_set;
+    float *cost_so_far;
     Point *path;
+    Heuristic_Func heuristic;
     bool found;
+    Point src, tgt;
 } AStarState;
 
-extern AStarState *astar_state_init(Grid *grid, Point src, Point tgt);
+extern void astar_state_init(AStarState *state, Grid *grid, Point src,
+                             Point tgt, Heuristic_Func heuristic);
 extern bool astar_step(AStarState *state);
 extern bool astar(AStarState *state);
 extern void astar_state_cleanup(AStarState *state);
