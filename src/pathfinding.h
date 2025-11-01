@@ -21,12 +21,8 @@ extern void pathfinding_cleanup(PathfindingState *state);
 
 extern bool dfs_step(PathfindingState *state);
 extern bool bfs_step(PathfindingState *state);
-extern bool ucs_step(PathfindingState *state);
-// extern bool a_star_step(PathfindingState *state);
 
 extern bool dfs(PathfindingState *state);
 extern bool bfs(PathfindingState *state);
-extern bool ucs(PathfindingState *state);
-// extern bool a_star(PathfindingState *state);
 
 #endif
