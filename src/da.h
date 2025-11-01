@@ -144,6 +144,28 @@ static void da_pop_end(void *da)
     }
 }
 
+static void da_reverse(void *da)
+{
+    if (!da)
+        return;
+
+    const _DA_Header *h = (_DA_Header *)da - 1;
+    const size_t length = h->length;
+    const size_t item_size = h->item_size;
+    const size_t half_length = length / 2;
+
+    char *array = (char *)da;
+    char temp[item_size];
+
+    for (size_t i = 0; i < half_length; i++)
+    {
+        memcpy(temp, array + i * item_size, item_size);
+        memcpy(array + i * item_size, array + (length - 1 - i) * item_size,
+               item_size);
+        memcpy(array + (length - 1 - i) * item_size, temp, item_size);
+    }
+}
+
 static inline size_t da_length(const void *da)
 {
     return da ? ((const _DA_Header *)da - 1)->length : 0;

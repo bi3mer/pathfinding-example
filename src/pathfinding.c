@@ -166,14 +166,7 @@ bool bfs_step(PathfindingState *state)
         state->path[da_length(state->path)] = state->src;
         da_increment_length(state->path);
 
-        // Reverse the path to go from source to target
-        size_t path_len = da_length(state->path);
-        for (size_t i = 0; i < path_len / 2; i++)
-        {
-            Point temp = state->path[i];
-            state->path[i] = state->path[path_len - 1 - i];
-            state->path[path_len - 1 - i] = temp;
-        }
+        da_reverse(state->path);
 
         return false; // Done - found path
     }

@@ -9,20 +9,20 @@
 
 int main(void)
 {
+    size_t animated_path_length, i;
+    int x, y;
+
     Grid grid;
     PathfindingState path_state;
 
-    const int grid_size = 20;
+    animated_path_length = 1;
+
+    const int grid_size = 50;
     const int cell_size = 10;
     const int screen_width = grid_size * cell_size;
     const int screen_height = grid_size * cell_size;
     const Point src = {5, 5};
     const Point tgt = {grid_size - 5, grid_size - 5};
-
-    SetConfigFlags(FLAG_MSAA_4X_HINT);
-    InitWindow(screen_width, screen_height, "Pathfinding Example");
-
-    SetTargetFPS(60);
 
     // set up grid that we will be pathfinding on
     SetRandomSeed(1);
@@ -34,7 +34,10 @@ int main(void)
     pathfinding_init(&path_state, &grid, src, tgt);
     bfs(&path_state);
 
-    size_t animated_path_length = 1;
+    // raylib set up
+    SetConfigFlags(FLAG_MSAA_4X_HINT);
+    InitWindow(screen_width, screen_height, "Pathfinding Example");
+    SetTargetFPS(60);
 
     while (!WindowShouldClose())
     {
@@ -48,9 +51,9 @@ int main(void)
         BeginDrawing();
         ClearBackground(BLACK);
 
-        for (int y = 0; y < grid_size; y++)
+        for (y = 0; y < grid_size; y++)
         {
-            for (int x = 0; x < grid_size; x++)
+            for (x = 0; x < grid_size; x++)
             {
                 DrawRectangle(x * cell_size, y * cell_size, cell_size,
                               cell_size,
@@ -72,7 +75,7 @@ int main(void)
 
         if (path_state.found)
         {
-            for (size_t i = 0;
+            for (i = 0;
                  i < animated_path_length && i < da_length(path_state.path) - 1;
                  i++)
             {
@@ -96,7 +99,7 @@ int main(void)
     CloseWindow();
 
     size_t explored_cells = 0;
-    for (size_t i = 0; i < grid_size * grid_size; ++i)
+    for (i = 0; i < grid_size * grid_size; ++i)
     {
         explored_cells += path_state.explored[i].x != -1;
     }
@@ -104,7 +107,7 @@ int main(void)
     float path_cost = 0;
     const size_t path_length = da_length(path_state.path);
     Point p;
-    for (size_t i = 0; i < path_length; ++i)
+    for (i = 0; i < path_length; ++i)
     {
         p = path_state.path[i];
         path_cost += terrain_to_cost(grid_at(&grid, p));
