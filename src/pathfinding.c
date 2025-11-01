@@ -37,10 +37,10 @@ void pathfinding_cleanup(PathfindingState *state)
 {
     if (state)
     {
-        da_free(state->queue);
+        da_cleanup(state->queue);
         state->queue = NULL;
 
-        da_free(state->path);
+        da_cleanup(state->path);
         state->path = NULL;
 
         free(state->explored);
