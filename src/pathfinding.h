@@ -8,9 +8,9 @@ typedef struct
 {
     Point *queue;
     Point *path;
-    Point *explored; // Flat array
-    float *costs;    // Flat array
-    Grid *grid;      // Reference to the grid (not a copy)
+    Point *explored;
+    float *costs;
+    Grid *grid;
     Point src, tgt;
     bool found;
 } PathfindingState;

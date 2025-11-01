@@ -40,8 +40,8 @@ cmake --build . --parallel
 
 |  | Nodes Explored | Path length | Path Cost |
 | :--: |  :------------- | :-- | :-- |
-| DFS | 309 | 119 | 3766 |
-| BFS | 368 | 21 | 564 |
+| DFS | 220 | 105 | 1165 |
+| BFS | 368 | 21 | 64 |
 | UCS |  |  |   |
 | A*  |   |  |  |
 
@@ -49,7 +49,7 @@ cmake --build . --parallel
 
 | | Nodes Explored | Path length | Path Cost |
 | :--: |  :------------- | :-- | :-- |
-| DFS | 1409 | 629 | 9966 |
-| BFS | 1568 | 61 | 589 |
+| DFS | 1240 | 615 | 9248 |
+| BFS | 1568 | 61 | 839 |
 | UCS |  |  |   |
 | A*  |   |  |  |

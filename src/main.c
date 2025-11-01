@@ -12,7 +12,7 @@ int main(void)
     Grid grid;
     PathfindingState path_state;
 
-    const int grid_size = 40;
+    const int grid_size = 20;
     const int cell_size = 10;
     const int screen_width = grid_size * cell_size;
     const int screen_height = grid_size * cell_size;
@@ -54,7 +54,7 @@ int main(void)
             {
                 DrawRectangle(x * cell_size, y * cell_size, cell_size,
                               cell_size,
-                              terrain_to_color(grid_at(&grid, x, y)));
+                              terrain_to_color(grid_at(&grid, (Point){x, y})));
 
                 int idx = y * grid.dimensions.x + x;
                 if (path_state.explored[idx].x != -1)
@@ -107,7 +107,7 @@ int main(void)
     for (size_t i = 0; i < path_length; ++i)
     {
         p = path_state.path[i];
-        path_cost += terrain_to_cost(grid_at(&grid, p.x, p.y));
+        path_cost += terrain_to_cost(grid_at(&grid, p));
     }
 
     printf("Cells explored: %lu\n", explored_cells);

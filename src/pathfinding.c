@@ -3,10 +3,6 @@
 #include "grid.h"
 #include "terrain.h"
 
-#define NUM_DIRECTIONS 4
-static const Point directions[NUM_DIRECTIONS] = {
-    {0, 1}, {0, -1}, {1, 0}, {-1, 0}};
-
 void pathfinding_init(PathfindingState *state, Grid *grid, Point src, Point tgt)
 {
     state->grid = grid;
@@ -65,6 +61,8 @@ bool dfs_step(PathfindingState *state)
         return false; // Done processing
     }
 
+    size_t id;
+
     size_t queue_length = da_length(state->queue) - 1;
     Point cur = state->queue[queue_length];
     da_pop_end(state->queue);
@@ -82,8 +80,8 @@ bool dfs_step(PathfindingState *state)
             state->path[da_length(state->path)] = trace;
             da_increment_length(state->path);
 
-            size_t idx = trace.y * state->grid->dimensions.x + trace.x;
-            trace = state->explored[idx];
+            id = (size_t)(trace.y * state->grid->dimensions.x + trace.x);
+            trace = state->explored[id];
         }
 
         // Add source to the path
@@ -103,27 +101,21 @@ bool dfs_step(PathfindingState *state)
         return false; // Done - found path
     }
 
-    for (size_t i = 0; i < NUM_DIRECTIONS; i++)
+    Point neighbors[4];
+    size_t num_neighbors = grid_neighbors(state->grid, cur, neighbors);
+    for (size_t i = 0; i < num_neighbors; i++)
     {
-        Point next;
-        next.x = directions[i].x + cur.x;
-        next.y = directions[i].y + cur.y;
+        const Point next = neighbors[i];
+        id = (size_t)(next.y * state->grid->dimensions.x + next.x);
 
-        if (next.x >= 0 && next.x < state->grid->dimensions.x && next.y >= 0 &&
-            next.y < state->grid->dimensions.y)
+        if (state->explored[id].x == -1)
         {
+            state->explored[id] = cur;
 
-            size_t idx = next.y * state->grid->dimensions.x + next.x;
-
-            if (state->explored[idx].x == -1)
-            {
-                state->explored[idx] = cur;
-
-                da_ensure_capacity((void *)&state->queue, 1);
-                size_t l = da_length(state->queue);
-                state->queue[l] = next;
-                da_increment_length(state->queue);
-            }
+            da_ensure_capacity((void *)&state->queue, 1);
+            size_t l = da_length(state->queue);
+            state->queue[l] = next;
+            da_increment_length(state->queue);
         }
     }
 
@@ -147,6 +139,8 @@ bool bfs_step(PathfindingState *state)
         return false; // Done processing
     }
 
+    size_t id;
+
     Point cur = state->queue[0];
     da_pop_start(state->queue);
 
@@ -163,8 +157,8 @@ bool bfs_step(PathfindingState *state)
             state->path[da_length(state->path)] = trace;
             da_increment_length(state->path);
 
-            size_t idx = trace.y * state->grid->dimensions.x + trace.x;
-            trace = state->explored[idx];
+            id = (size_t)(trace.y * state->grid->dimensions.x + trace.x);
+            trace = state->explored[id];
         }
 
         // Add source to the path
@@ -184,27 +178,21 @@ bool bfs_step(PathfindingState *state)
         return false; // Done - found path
     }
 
-    for (size_t i = 0; i < NUM_DIRECTIONS; i++)
+    Point neighbors[4];
+    size_t num_neighbors = grid_neighbors(state->grid, cur, neighbors);
+    for (size_t i = 0; i < num_neighbors; i++)
     {
-        Point next;
-        next.x = directions[i].x + cur.x;
-        next.y = directions[i].y + cur.y;
+        const Point next = neighbors[i];
+        id = (size_t)(next.y * state->grid->dimensions.x + next.x);
 
-        if (next.x >= 0 && next.x < state->grid->dimensions.x && next.y >= 0 &&
-            next.y < state->grid->dimensions.y)
+        if (state->explored[id].x == -1)
         {
+            state->explored[id] = cur;
 
-            size_t idx = next.y * state->grid->dimensions.x + next.x;
-
-            if (state->explored[idx].x == -1)
-            {
-                state->explored[idx] = cur;
-
-                da_ensure_capacity((void *)&state->queue, 1);
-                size_t l = da_length(state->queue);
-                state->queue[l] = next;
-                da_increment_length(state->queue);
-            }
+            da_ensure_capacity((void *)&state->queue, 1);
+            size_t l = da_length(state->queue);
+            state->queue[l] = next;
+            da_increment_length(state->queue);
         }
     }
 

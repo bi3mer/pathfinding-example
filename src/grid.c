@@ -36,12 +36,42 @@ void grid_perlin_terrain(Grid *grid, float scale, Point offset)
     }
 }
 
-Terrain_Type grid_at(Grid *grid, int x, int y)
+Terrain_Type grid_at(Grid *grid, Point p)
 {
-    return grid->grid[y * grid->dimensions.x + x];
+    return grid->grid[p.y * grid->dimensions.x + p.x];
 }
 
-void grid_set(Grid *grid, int x, int y, Terrain_Type value)
+void grid_set(Grid *grid, Point p, Terrain_Type value)
 {
-    grid->grid[y * grid->dimensions.x + x] = value;
+    grid->grid[p.y * grid->dimensions.x + p.x] = value;
+}
+
+size_t grid_neighbors(Grid *grid, Point p, Point out[4])
+{
+    size_t count = 0;
+    if (p.x > 0)
+    {
+        out[count].x = p.x - 1;
+        out[count].y = p.y;
+        ++count;
+    }
+    if (p.x < grid->dimensions.x - 1)
+    {
+        out[count].x = p.x + 1;
+        out[count].y = p.y;
+        ++count;
+    }
+    if (p.y > 0)
+    {
+        out[count].x = p.x;
+        out[count].y = p.y - 1;
+        ++count;
+    }
+    if (p.y < grid->dimensions.y - 1)
+    {
+        out[count].x = p.x;
+        out[count].y = p.y + 1;
+        ++count;
+    }
+    return count;
 }
