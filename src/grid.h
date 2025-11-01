@@ -16,6 +16,8 @@ extern void grid_cleanup(Grid *grid);
 
 extern void grid_perlin_terrain(Grid *grid, float scale, Point offset);
 
+extern size_t grid_index(const Grid *grid, const Point p);
+
 extern Terrain_Type grid_at(Grid *grid, Point p);
 extern void grid_set(Grid *grid, Point p, Terrain_Type value);
 

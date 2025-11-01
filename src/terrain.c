@@ -36,7 +36,7 @@ Color terrain_to_color(Terrain_Type t)
     return MAGENTA; // fallback error
 }
 
-float terrain_to_cost(Terrain_Type t)
+float terrain_cost(Terrain_Type t)
 {
     switch (t)
     {

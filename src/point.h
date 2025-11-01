@@ -8,6 +8,6 @@ typedef struct Point
     int x, y;
 } Point;
 
-bool point_equals(const Point a, const Point b);
+extern bool point_equals(const Point a, const Point b);
 
 #endif

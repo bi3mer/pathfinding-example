@@ -13,6 +13,6 @@ typedef enum
 
 extern Terrain_Type noise_to_terrain(float noise);
 extern Color terrain_to_color(Terrain_Type t);
-extern float terrain_to_cost(Terrain_Type t);
+extern float terrain_cost(Terrain_Type t);
 
 #endif

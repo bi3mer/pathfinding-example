@@ -17,7 +17,7 @@ int main(void)
 
     animated_path_length = 1;
 
-    const int grid_size = 50;
+    const int grid_size = 100;
     const int cell_size = 10;
     const int screen_width = grid_size * cell_size;
     const int screen_height = grid_size * cell_size;
@@ -110,7 +110,7 @@ int main(void)
     for (i = 0; i < path_length; ++i)
     {
         p = path_state.path[i];
-        path_cost += terrain_to_cost(grid_at(&grid, p));
+        path_cost += terrain_cost(grid_at(&grid, p));
     }
 
     printf("Cells explored: %lu\n", explored_cells);

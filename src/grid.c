@@ -36,6 +36,11 @@ void grid_perlin_terrain(Grid *grid, float scale, Point offset)
     }
 }
 
+extern size_t grid_index(const Grid *grid, const Point p)
+{
+    return (size_t)(p.y * grid->dimensions.x + p.x);
+}
+
 Terrain_Type grid_at(Grid *grid, Point p)
 {
     return grid->grid[p.y * grid->dimensions.x + p.x];
