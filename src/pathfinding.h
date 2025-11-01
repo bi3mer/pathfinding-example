@@ -8,7 +8,7 @@ typedef struct
 {
     Point *queue;
     Point *path;
-    Point *explored;
+    Point *came_from;
     Grid *grid;
     Point src, tgt;
     bool found;

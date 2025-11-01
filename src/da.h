@@ -17,6 +17,7 @@ extern void *da_init(const size_t item_size, const size_t capacity);
 extern void da_cleanup(void *da);
 
 extern void da_ensure_capacity(void **da, const size_t capacity_increase);
+extern void *da_append(void **da);
 
 extern size_t da_priority_insert(void **da, const size_t priority,
                                  int (*compare)(const void *, const size_t));

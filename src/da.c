@@ -59,6 +59,17 @@ void da_ensure_capacity(void **da, const size_t capacity_increase)
     }
 }
 
+void *da_append(void **da)
+{
+    da_ensure_capacity(da, 1);
+    _DA_Header *h = ((_DA_Header *)(*da) - 1);
+    char *bytes = (char *)(*da);
+    void *new_element = bytes + (h->length * h->item_size);
+    h->length++;
+
+    return new_element;
+}
+
 size_t da_priority_insert(void **da, const size_t priority,
                           int (*compare)(const void *, const size_t))
 {

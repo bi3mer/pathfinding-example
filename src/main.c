@@ -17,7 +17,7 @@ int main(void)
 
     animated_path_length = 1;
 
-    const int grid_size = 100;
+    const int grid_size = 40;
     const int cell_size = 10;
     const int screen_width = grid_size * cell_size;
     const int screen_height = grid_size * cell_size;
@@ -44,7 +44,7 @@ int main(void)
         /////////////////////// Update ///////////////////////
         if (!path_state.found)
         {
-            dfs_step(&path_state);
+            // bfs_step(&path_state);
         }
 
         /////////////////////// Draw ///////////////////////
@@ -60,7 +60,7 @@ int main(void)
                               terrain_to_color(grid_at(&grid, (Point){x, y})));
 
                 int idx = y * grid.dimensions.x + x;
-                if (path_state.explored[idx].x != -1)
+                if (path_state.came_from[idx].x != -1)
                 {
                     DrawRectangle(x * cell_size, y * cell_size, cell_size,
                                   cell_size, (Color){100, 0, 0, 100});
@@ -101,7 +101,7 @@ int main(void)
     size_t explored_cells = 0;
     for (i = 0; i < grid_size * grid_size; ++i)
     {
-        explored_cells += path_state.explored[i].x != -1;
+        explored_cells += path_state.came_from[i].x != -1;
     }
 
     float path_cost = 0;
