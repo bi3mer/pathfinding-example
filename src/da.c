@@ -70,17 +70,14 @@ void *da_append(void **da)
     return new_element;
 }
 
-size_t da_priority_insert(void **da, const size_t priority,
-                          int (*compare)(const void *, const size_t))
+void *da_priority_insert(void **da, const float priority,
+                         int (*compare)(const void *, const float))
 {
     size_t i, insert_index;
-
     da_ensure_capacity(da, 1);
     _DA_Header *h = ((_DA_Header *)(*da) - 1);
     char *bytes = (char *)(*da);
-
     insert_index = h->length;
-
     for (i = 0; i < h->length; ++i)
     {
         if (compare(bytes + (i * h->item_size), priority) > 0)
@@ -89,39 +86,15 @@ size_t da_priority_insert(void **da, const size_t priority,
             break;
         }
     }
-
     if (insert_index < h->length)
     {
         memmove(bytes + ((insert_index + 1) * h->item_size),
                 bytes + (insert_index * h->item_size),
                 (h->length - insert_index) * h->item_size);
     }
-
     ++h->length;
-
-    return insert_index;
-}
-
-size_t da_insert_at(void **da, size_t index)
-{
-    da_ensure_capacity(da, 1);
-    _DA_Header *h = ((_DA_Header *)(*da) - 1);
-    char *bytes = (char *)(*da);
-
-    if (index > h->length) // not sure I like this choice...
-    {
-        index = h->length;
-    }
-
-    if (index < h->length)
-    {
-        memmove(bytes + ((index + 1) * h->item_size),
-                bytes + (index * h->item_size),
-                (h->length - index) * h->item_size);
-    }
-
-    ++h->length;
-    return index;
+    return bytes + (insert_index *
+                    h->item_size); // Return pointer to the inserted element
 }
 
 void da_pop_start(void *da)

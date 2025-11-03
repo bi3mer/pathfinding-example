@@ -19,9 +19,8 @@ extern void da_cleanup(void *da);
 extern void da_ensure_capacity(void **da, const size_t capacity_increase);
 extern void *da_append(void **da);
 
-extern size_t da_priority_insert(void **da, const size_t priority,
-                                 int (*compare)(const void *, const size_t));
-extern size_t da_insert_at(void **da, size_t index);
+extern void *da_priority_insert(void **da, const float priority,
+                                int (*compare)(const void *, const float));
 
 extern void da_pop_start(void *da);
 extern void da_pop_end(void *da);

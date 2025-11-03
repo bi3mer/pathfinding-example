@@ -53,8 +53,7 @@ int main(void)
 
     // set up pathfiding state
     pathfinding_init(&path_state, &grid, src, tgt);
-    astar_state_init(&astar_state, &grid, src, tgt,
-                     point_inadmissable_heuristic);
+    astar_state_init(&astar_state, &grid, src, tgt, point_manhattan_distance);
 
     // raylib set up
     SetConfigFlags(FLAG_MSAA_4X_HINT);

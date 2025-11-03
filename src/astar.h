@@ -7,8 +7,8 @@ typedef float (*Heuristic_Func)(const Point a, const Point b);
 
 typedef struct
 {
-    Point point;
     float priority;
+    Point point;
 } AStarNode;
 
 typedef struct

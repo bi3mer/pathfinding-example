@@ -2,12 +2,13 @@
 #include "da.h"
 #include "grid.h"
 #include "point.h"
+#include "terrain.h"
 
 #include <math.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
-int astar_compare(const void *node, const size_t priority)
+int astar_compare(const void *node, const float priority)
 {
     const AStarNode *n = (const AStarNode *)node;
     return (n->priority > priority) ? 1 : -1;
@@ -71,22 +72,22 @@ bool astar_step(AStarState *state)
     if (state->found || da_length(state->queue) == 0)
         return false; // done processing
 
-    const AStarNode node = state->queue[0];
-    const size_t node_id = grid_index(state->grid, node.point);
+    AStarNode node = state->queue[0];
     da_pop_start(state->queue);
+    const size_t node_id = grid_index(state->grid, node.point);
 
     if (point_equals(node.point, state->tgt))
     {
-        Point cur = node.point;
         state->found = true;
+        Point p = node.point;
 
-        while (!point_equals(cur, state->src))
+        while (!point_equals(p, state->src))
         {
-            *(Point *)da_append((void **)&state->path) = cur;
-            cur = state->came_from[grid_index(state->grid, cur)];
+            *(Point *)da_append((void **)&state->path) = p;
+            p = state->came_from[grid_index(state->grid, p)];
         }
 
-        *(Point *)da_append((void **)&state->path) = cur;
+        *(Point *)da_append((void **)&state->path) = state->src;
         da_reverse(state->path);
 
         return false; // done processing
@@ -98,28 +99,27 @@ bool astar_step(AStarState *state)
 
     for (size_t i = 0; i < num_neighbors; ++i)
     {
-        const Point n = neighbors[i];
-        const size_t id = grid_index(state->grid, n);
+        const size_t id = grid_index(state->grid, neighbors[i]);
+        const float tc = terrain_cost(state->grid->grid[id]);
+        const float cost = tc + state->cost_so_far[node_id];
 
-        const Terrain_Type terrain = grid_at(state->grid, n);
-        const float move_cost = terrain_cost(terrain);
-
-        const float new_cost = state->cost_so_far[node_id] + move_cost;
-
-        if (state->came_from[id].x == -1 || new_cost < state->cost_so_far[id])
+        if (state->came_from[id].x == -1 || cost < state->cost_so_far[id])
         {
-            state->cost_so_far[id] = new_cost;
-            state->came_from[id] = node.point;
+            const size_t n_id = grid_index(state->grid, neighbors[i]);
+            state->came_from[n_id] = node.point;
+            state->cost_so_far[n_id] = cost;
 
-            const float priority = new_cost + state->heuristic(n, state->tgt);
-            const size_t insert_idx = da_priority_insert(
-                (void **)&state->queue, (size_t)priority, astar_compare);
+            const float priority =
+                cost + state->heuristic(neighbors[i], state->tgt);
 
-            state->queue[insert_idx] = (AStarNode){n, priority};
+            const size_t index = da_priority_insert((void **)&state->queue,
+                                                    priority, astar_compare);
+            state->queue[index].priority = priority;
+            state->queue[index].point = neighbors[i];
         }
     }
 
-    return true;
+    return true; // Still processing}
 }
 
 bool astar(AStarState *state)

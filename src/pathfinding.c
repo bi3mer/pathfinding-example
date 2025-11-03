@@ -27,8 +27,8 @@ void pathfinding_init(PathfindingState *state, Grid *grid, Point src, Point tgt)
     state->queue[0] = src;
     da_increment_length(state->queue);
 
-    const size_t src_idx = (size_t)(src.y * grid->dimensions.x + src.x);
-    state->came_from[src_idx] = src;
+    // const size_t src_idx = (size_t)(src.y * grid->dimensions.x + src.x);
+    // state->came_from[src_idx] = src;
 }
 
 void pathfinding_cleanup(PathfindingState *state)
@@ -55,36 +55,34 @@ bool dfs_step(PathfindingState *state)
     if (state->found || da_length(state->queue) == 0)
         return false; // done processing
 
-    Point cur = state->queue[da_length(state->queue) - 1];
+    Point p = state->queue[da_length(state->queue) - 1];
     da_pop_end(state->queue);
 
-    if (point_equals(cur, state->tgt))
+    if (point_equals(p, state->tgt))
     {
         state->found = true;
 
-        while (!point_equals(cur, state->src))
+        while (!point_equals(p, state->src))
         {
-            *(Point *)da_append((void **)&state->path) = cur;
-            cur = state->came_from[grid_index(state->grid, cur)];
+            *(Point *)da_append((void **)&state->path) = p;
+            p = state->came_from[grid_index(state->grid, p)];
         }
 
-        *(Point *)da_append((void **)&state->path) = cur;
+        *(Point *)da_append((void **)&state->path) = state->src;
         da_reverse(state->path);
 
         return false; // done processing
     }
 
     Point neighbors[4];
-    const size_t num_neighbors = grid_neighbors(state->grid, cur, neighbors);
+    const size_t num_neighbors = grid_neighbors(state->grid, p, neighbors);
     for (size_t i = 0; i < num_neighbors; ++i)
     {
-        const Point n = neighbors[i];
-        const size_t id = grid_index(state->grid, n);
-
+        const size_t id = grid_index(state->grid, neighbors[i]);
         if (state->came_from[id].x == -1)
         {
-            state->came_from[id] = cur;
-            *(Point *)da_append((void **)&state->queue) = n;
+            state->came_from[grid_index(state->grid, neighbors[i])] = p;
+            *(Point *)da_append((void **)&state->queue) = neighbors[i];
         }
     }
 
@@ -106,36 +104,34 @@ bool bfs_step(PathfindingState *state)
     if (state->found || da_length(state->queue) == 0)
         return false; // done processing
 
-    Point cur = state->queue[0];
+    Point p = state->queue[0];
     da_pop_start(state->queue);
 
-    if (point_equals(cur, state->tgt))
+    if (point_equals(p, state->tgt))
     {
         state->found = true;
 
-        while (!point_equals(cur, state->src))
+        while (!point_equals(p, state->src))
         {
-            *(Point *)da_append((void **)&state->path) = cur;
-            cur = state->came_from[grid_index(state->grid, cur)];
+            *(Point *)da_append((void **)&state->path) = p;
+            p = state->came_from[grid_index(state->grid, p)];
         }
 
-        *(Point *)da_append((void **)&state->path) = cur;
+        *(Point *)da_append((void **)&state->path) = state->src;
         da_reverse(state->path);
 
         return false; // done processing
     }
 
     Point neighbors[4];
-    const size_t num_neighbors = grid_neighbors(state->grid, cur, neighbors);
+    const size_t num_neighbors = grid_neighbors(state->grid, p, neighbors);
     for (size_t i = 0; i < num_neighbors; ++i)
     {
-        const Point n = neighbors[i];
-        const size_t id = grid_index(state->grid, n);
-
+        const size_t id = grid_index(state->grid, neighbors[i]);
         if (state->came_from[id].x == -1)
         {
-            state->came_from[id] = cur;
-            *(Point *)da_append((void **)&state->queue) = n;
+            state->came_from[grid_index(state->grid, neighbors[i])] = p;
+            *(Point *)da_append((void **)&state->queue) = neighbors[i];
         }
     }
 
