@@ -21,6 +21,12 @@ typedef enum
     ALGORITHM_ASTAR
 } Algorithm;
 
+typedef struct
+{
+    Heuristic type;
+    const char *name;
+} HeuristicOption;
+
 int main(void)
 {
     Algorithm current_algorithm;
@@ -45,6 +51,15 @@ int main(void)
     const int screen_height = grid_size * cell_size;
     const Point src = {5, 5};
     const Point tgt = {grid_size - 5, grid_size - 5};
+
+    HeuristicOption heuristics[] = {
+        {Heuristic_Manhattan, "Manhattan"},
+        {Heuristic_Inadmissable_Manhattan, "Manhattan (4x)"},
+        {Heuristic_Euclidian, "Euclidean"},
+        {Heuristic_Zero, "Zero (Dijkstra)"},
+    };
+    const int num_heuristics = Heuristic_Count;
+    Heuristic current_heuristic = Heuristic_Manhattan;
 
     // set up grid that we will be pathfinding on
     SetRandomSeed(seed);
@@ -230,6 +245,7 @@ int main(void)
 
         if (show_help)
         {
+            /// BFS, DFS, and A* buttons
             DrawRectangle(0, 0, screen_width, screen_height,
                           (Color){0, 0, 0, 180});
 
@@ -291,23 +307,89 @@ int main(void)
                 show_help = false;
             }
 
-            // seed and map generation
-            int seed_y = button_y + button_height + 40;
+            /// heuristic selection
+            int heuristic_y = button_y + button_height + 50;
+
+            // Title for heuristics
+            const char *heuristic_title = "A* Heuristic (keys 1-4):";
+            int title_width = MeasureText(heuristic_title, 20);
+            DrawText(heuristic_title, (screen_width - title_width) / 2,
+                     heuristic_y - 25, 20,
+                     current_algorithm == ALGORITHM_ASTAR ? YELLOW : GRAY);
+
+            // Heuristic buttons
+            GuiSetStyle(DEFAULT, TEXT_SIZE, 18);
+            int h_button_height = 40;
+            int h_button_spacing = 15;
+
+            // Find max width for heuristic buttons
+            int max_h_width = 0;
+            for (i = 0; i < num_heuristics; i++)
+            {
+                int w = MeasureText(heuristics[i].name, 18);
+                if (w > max_h_width)
+                    max_h_width = w;
+            }
+            int h_button_width = max_h_width + 30;
+
+            // Single row layout
+            int h_total_width = (h_button_width * num_heuristics) +
+                                (h_button_spacing * (num_heuristics - 1));
+            int h_start_x = (screen_width - h_total_width) / 2;
+
+            for (i = 0; i < num_heuristics; i++)
+            {
+                // Highlight current selection
+                bool is_selected = (heuristics[i].type == current_heuristic);
+
+                Rectangle button_rect = {
+                    h_start_x + i * (h_button_width + h_button_spacing),
+                    heuristic_y, h_button_width, h_button_height};
+
+                // Draw colored background for selected
+                if (is_selected)
+                {
+                    DrawRectangleRec(button_rect, Fade(GOLD, 0.3f));
+                    DrawRectangleLinesEx(button_rect, 2, GOLD);
+                }
+
+                // Dim buttons if not using A*
+                if (current_algorithm != ALGORITHM_ASTAR)
+                {
+                    DrawRectangleRec(button_rect, Fade(BLACK, 0.5f));
+                }
+
+                if (GuiButton(button_rect, heuristics[i].name))
+                {
+                    current_heuristic = heuristics[i].type;
+                    if (current_algorithm == ALGORITHM_ASTAR)
+                    {
+                        astar_state_cleanup(&astar_state);
+                        astar_state_init(&astar_state, &grid, src, tgt,
+                                         current_heuristic);
+                        animated_path_length = 1;
+                        show_help = false;
+                    }
+                    // If not using A*, just store the selection for later
+                }
+            }
+
+            /// seed and map generation
+            int seed_y = button_y + button_height + 100;
             int seed_width = 300;
             int seed_x = (screen_width - seed_width) / 2;
 
-            // Display current seed
-            DrawText(TextFormat("Seed: %u", seed), seed_x + seed_width / 2 - 50,
-                     seed_y, 20, WHITE);
+            const char *seed_text = TextFormat("Seed: %u", seed);
+            int seed_text_width = MeasureText(seed_text, 20);
+            DrawText(seed_text, (screen_width - seed_text_width) / 2, seed_y,
+                     20, WHITE);
 
-            // New Random Seed button
             if (GuiButton((Rectangle){seed_x + seed_width / 2 - 60, seed_y + 30,
                                       120, 30},
                           "New Map"))
             {
                 seed = GetRandomValue(0, 9999);
 
-                // Regenerate terrain with new seed
                 SetRandomSeed(seed);
                 grid_cleanup(&grid);
                 grid_init(&grid, (Point){grid_size, grid_size});
@@ -315,7 +397,6 @@ int main(void)
                     &grid, 20.f,
                     (Point){GetRandomValue(0, 1000), GetRandomValue(0, 1000)});
 
-                // Reset pathfinding
                 if (current_algorithm == ALGORITHM_BFS ||
                     current_algorithm == ALGORITHM_DFS)
                 {
@@ -328,6 +409,7 @@ int main(void)
                     astar_state_init(&astar_state, &grid, src, tgt,
                                      Heuristic_Inadmissable_Manhattan);
                 }
+
                 animated_path_length = 1;
             }
         }
