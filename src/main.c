@@ -1,6 +1,7 @@
 #include "astar.h"
 #include "da.h"
 #include "grid.h"
+#include "heuristic.h"
 #include "pathfinding.h"
 #include "point.h"
 #include "raylib.h"
@@ -53,7 +54,8 @@ int main(void)
 
     // set up pathfiding state
     pathfinding_init(&path_state, &grid, src, tgt);
-    astar_state_init(&astar_state, &grid, src, tgt, point_manhattan_distance);
+    astar_state_init(&astar_state, &grid, src, tgt,
+                     Heuristic_Inadmissable_Manhattan);
 
     // raylib set up
     SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -284,7 +286,7 @@ int main(void)
                 current_algorithm = ALGORITHM_ASTAR;
                 astar_state_cleanup(&astar_state);
                 astar_state_init(&astar_state, &grid, src, tgt,
-                                 point_euclidian_distance);
+                                 Heuristic_Inadmissable_Manhattan);
                 animated_path_length = 1;
                 show_help = false;
             }
@@ -324,7 +326,7 @@ int main(void)
                 {
                     astar_state_cleanup(&astar_state);
                     astar_state_init(&astar_state, &grid, src, tgt,
-                                     point_euclidian_distance);
+                                     Heuristic_Inadmissable_Manhattan);
                 }
                 animated_path_length = 1;
             }

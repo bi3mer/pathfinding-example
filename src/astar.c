@@ -8,14 +8,14 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-int astar_compare(const void *node, const float priority)
+static int astar_compare(const void *node, const float priority)
 {
     const AStarNode *n = (const AStarNode *)node;
     return (n->priority > priority) ? 1 : -1;
 }
 
 void astar_state_init(AStarState *state, Grid *grid, Point src, Point tgt,
-                      Heuristic_Func heuristic)
+                      Heuristic heuristic)
 {
     state->grid = grid;
     state->src = src;
@@ -41,7 +41,7 @@ void astar_state_init(AStarState *state, Grid *grid, Point src, Point tgt,
     state->came_from[start_idx] = src; // Parent of start is itself
 
     AStarNode *start = da_append((void **)&state->queue);
-    start->priority = heuristic(src, tgt);
+    start->priority = 0;
     start->point = src;
 
     state->found = false;
@@ -110,12 +110,12 @@ bool astar_step(AStarState *state)
             state->cost_so_far[n_id] = cost;
 
             const float priority =
-                cost + state->heuristic(neighbors[i], state->tgt);
+                cost + heuristic(state->heuristic, neighbors[i], state->tgt);
 
-            const size_t index = da_priority_insert((void **)&state->queue,
-                                                    priority, astar_compare);
-            state->queue[index].priority = priority;
-            state->queue[index].point = neighbors[i];
+            AStarNode *a = da_priority_insert((void **)&state->queue, priority,
+                                              astar_compare);
+            a->priority = priority;
+            a->point = neighbors[i];
         }
     }
 

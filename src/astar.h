@@ -2,8 +2,7 @@
 #define _ASTAR_
 
 #include "grid.h"
-
-typedef float (*Heuristic_Func)(const Point a, const Point b);
+#include "heuristic.h"
 
 typedef struct
 {
@@ -18,13 +17,13 @@ typedef struct
     Point *came_from;
     float *cost_so_far;
     Point *path;
-    Heuristic_Func heuristic;
+    Heuristic heuristic;
     bool found;
     Point src, tgt;
 } AStarState;
 
 extern void astar_state_init(AStarState *state, Grid *grid, Point src,
-                             Point tgt, Heuristic_Func heuristic);
+                             Point tgt, Heuristic heuristic);
 extern bool astar_step(AStarState *state);
 extern bool astar(AStarState *state);
 extern void astar_state_cleanup(AStarState *state);
