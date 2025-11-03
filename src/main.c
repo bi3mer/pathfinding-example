@@ -151,6 +151,8 @@ int main(void)
                                        : path_length;
         }
 
+        /////////////////////////////////////////
+        // Informatino Panel
         if (IsKeyPressed(KEY_I))
         {
             show_info = !show_info;
@@ -182,11 +184,19 @@ int main(void)
                 }
             }
 
+            int panel_width =
+                250; // Fixed width that fits "Nodes explored: 99999"
+            int panel_height = 100;
+            int info_x = screen_width - panel_width - 10;
+            int info_y = 10;
+            int line_height = 25;
+
+            DrawRectangle(info_x - 5, info_y - 5, panel_width + 10,
+                          panel_height, (Color){0, 0, 0, 180});
+
             const char *algo_name = "None";
             switch (current_algorithm)
             {
-            case ALGORITHM_NONE:
-                break;
             case ALGORITHM_BFS:
                 algo_name = "BFS";
                 break;
@@ -200,42 +210,18 @@ int main(void)
                 break;
             }
 
-            char nodes_text[64], length_text[64], cost_text[64], algo_text[64];
-            snprintf(nodes_text, sizeof(nodes_text), "Nodes explored: %zu",
-                     explored_cells);
-            snprintf(length_text, sizeof(length_text), "Path length: %zu",
-                     path_length);
-            snprintf(cost_text, sizeof(cost_text), "Path cost: %.1f",
-                     path_cost);
-            snprintf(algo_text, sizeof(algo_text), "Algorithm: %s", algo_name);
-
-            int max_width = MeasureText(nodes_text, 20);
-            int width2 = MeasureText(length_text, 20);
-            int width3 = MeasureText(cost_text, 20);
-            int width4 = MeasureText(algo_text, 20);
-            if (width2 > max_width)
-                max_width = width2;
-            if (width3 > max_width)
-                max_width = width3;
-            if (width4 > max_width)
-                max_width = width4;
-
-            // Draw info panel in top right with dynamic width
-            int panel_width = max_width + 20; // Add padding
-            int panel_height = 100;
-            int info_x = screen_width - panel_width - 10;
-            int info_y = 10;
-            int line_height = 25;
-
-            DrawRectangle(info_x - 5, info_y - 5, panel_width + 10,
-                          panel_height, (Color){0, 0, 0, 180});
-
-            DrawText(nodes_text, info_x, info_y, 20, WHITE);
-            DrawText(length_text, info_x, info_y + line_height, 20, WHITE);
-            DrawText(cost_text, info_x, info_y + line_height * 2, 20, WHITE);
-            DrawText(algo_text, info_x, info_y + line_height * 3, 20, WHITE);
+            DrawText(TextFormat("Nodes explored: %zu", explored_cells), info_x,
+                     info_y, 20, WHITE);
+            DrawText(TextFormat("Path length: %zu", path_length), info_x,
+                     info_y + line_height, 20, WHITE);
+            DrawText(TextFormat("Path cost: %.1f", path_cost), info_x,
+                     info_y + line_height * 2, 20, WHITE);
+            DrawText(TextFormat("Algorithm: %s", algo_name), info_x,
+                     info_y + line_height * 3, 20, WHITE);
         }
 
+        /////////////////////////////////////////
+        // Algorithm Selection
         if (IsKeyPressed(KEY_H))
         {
             show_help = !show_help;
