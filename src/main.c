@@ -56,7 +56,7 @@ int main(void)
         {Heuristic_Manhattan, "Manhattan"},
         {Heuristic_Inadmissable_Manhattan, "Manhattan (4x)"},
         {Heuristic_Euclidian, "Euclidean"},
-        {Heuristic_Zero, "Zero (Dijkstra)"},
+        {Heuristic_Zero, "Zero"},
     };
     const int num_heuristics = Heuristic_Count;
     Heuristic current_heuristic = Heuristic_Manhattan;
@@ -222,6 +222,7 @@ int main(void)
             case ALGORITHM_ASTAR:
                 algo_name = "A*";
                 break;
+            case ALGORITHM_NONE:
             default:
                 break;
             }
@@ -388,7 +389,7 @@ int main(void)
                                       120, 30},
                           "New Map"))
             {
-                seed = GetRandomValue(0, 9999);
+                seed = GetRandomValue(0, 99999);
 
                 SetRandomSeed(seed);
                 grid_cleanup(&grid);

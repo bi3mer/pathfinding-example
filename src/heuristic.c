@@ -9,7 +9,6 @@ float heuristic(Heuristic h, const Point a, const Point b)
     {
     case Heuristic_Manhattan:
     {
-
         res = (float)(abs(a.x - b.x) + abs(a.y - b.y));
         break;
     }
