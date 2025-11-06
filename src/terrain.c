@@ -38,19 +38,25 @@ Color terrain_to_color(Terrain_Type t)
 
 float terrain_cost(Terrain_Type t)
 {
+    float cost;
+    cost = 100000.f;
+
     switch (t)
     {
     case TERRAIN_GRASS:
-        return 1.0f;
+        cost = 1.0f;
+        break;
     case TERRAIN_SAND:
-        return 2.0f;
+        cost = 4.0f;
+        break;
     case TERRAIN_WATER_SHALLOW:
-        return 4.0f;
+        cost = 25.0f;
+        break;
     case TERRAIN_WATER_DEEP:
-        return 100.0f;
     case TERRAIN_COUNT:
     default:
-        return 100.0f;
+        break;
     }
-    return 100.0f;
+
+    return cost;
 }

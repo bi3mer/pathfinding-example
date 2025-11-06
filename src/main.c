@@ -59,7 +59,6 @@ int main(void)
         {Heuristic_Zero, "Zero"},
     };
     const int num_heuristics = Heuristic_Count;
-    Heuristic current_heuristic = Heuristic_Manhattan;
 
     // set up grid that we will be pathfinding on
     SetRandomSeed(seed);
@@ -69,8 +68,7 @@ int main(void)
 
     // set up pathfiding state
     pathfinding_init(&path_state, &grid, src, tgt);
-    astar_state_init(&astar_state, &grid, src, tgt,
-                     Heuristic_Inadmissable_Manhattan);
+    astar_state_init(&astar_state, &grid, src, tgt, Heuristic_Manhattan);
 
     // raylib set up
     SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -168,7 +166,7 @@ int main(void)
         }
 
         /////////////////////////////////////////
-        // Informatino Panel
+        // Information Panel
         if (IsKeyPressed(KEY_I))
         {
             show_info = !show_info;
@@ -303,7 +301,7 @@ int main(void)
                 current_algorithm = ALGORITHM_ASTAR;
                 astar_state_cleanup(&astar_state);
                 astar_state_init(&astar_state, &grid, src, tgt,
-                                 Heuristic_Inadmissable_Manhattan);
+                                 astar_state.heuristic);
                 animated_path_length = 1;
                 show_help = false;
             }
@@ -311,19 +309,16 @@ int main(void)
             /// heuristic selection
             int heuristic_y = button_y + button_height + 50;
 
-            // Title for heuristics
             const char *heuristic_title = "A* Heuristic (keys 1-4):";
             int title_width = MeasureText(heuristic_title, 20);
             DrawText(heuristic_title, (screen_width - title_width) / 2,
                      heuristic_y - 25, 20,
                      current_algorithm == ALGORITHM_ASTAR ? YELLOW : GRAY);
 
-            // Heuristic buttons
             GuiSetStyle(DEFAULT, TEXT_SIZE, 18);
             int h_button_height = 40;
             int h_button_spacing = 15;
 
-            // Find max width for heuristic buttons
             int max_h_width = 0;
             for (i = 0; i < num_heuristics; i++)
             {
@@ -333,45 +328,30 @@ int main(void)
             }
             int h_button_width = max_h_width + 30;
 
-            // Single row layout
             int h_total_width = (h_button_width * num_heuristics) +
                                 (h_button_spacing * (num_heuristics - 1));
             int h_start_x = (screen_width - h_total_width) / 2;
 
             for (i = 0; i < num_heuristics; i++)
             {
-                // Highlight current selection
-                bool is_selected = (heuristics[i].type == current_heuristic);
-
                 Rectangle button_rect = {
                     h_start_x + i * (h_button_width + h_button_spacing),
                     heuristic_y, h_button_width, h_button_height};
 
-                // Draw colored background for selected
-                if (is_selected)
-                {
-                    DrawRectangleRec(button_rect, Fade(GOLD, 0.3f));
-                    DrawRectangleLinesEx(button_rect, 2, GOLD);
-                }
-
-                // Dim buttons if not using A*
-                if (current_algorithm != ALGORITHM_ASTAR)
-                {
-                    DrawRectangleRec(button_rect, Fade(BLACK, 0.5f));
-                }
-
                 if (GuiButton(button_rect, heuristics[i].name))
                 {
-                    current_heuristic = heuristics[i].type;
-                    if (current_algorithm == ALGORITHM_ASTAR)
-                    {
-                        astar_state_cleanup(&astar_state);
-                        astar_state_init(&astar_state, &grid, src, tgt,
-                                         current_heuristic);
-                        animated_path_length = 1;
-                        show_help = false;
-                    }
-                    // If not using A*, just store the selection for later
+                    astar_state.heuristic = heuristics[i].type;
+                    current_algorithm = ALGORITHM_NONE;
+                }
+
+                if (heuristics[i].type == astar_state.heuristic)
+                {
+                    DrawRectangleLinesEx(
+                        (Rectangle){button_rect.x - 5, button_rect.y - 5,
+                                    button_rect.width + 10,
+                                    button_rect.height + 10},
+                        3.0f, // Line thickness (adjust this value)
+                        RED);
                 }
             }
 
@@ -408,7 +388,7 @@ int main(void)
                 {
                     astar_state_cleanup(&astar_state);
                     astar_state_init(&astar_state, &grid, src, tgt,
-                                     Heuristic_Inadmissable_Manhattan);
+                                     astar_state.heuristic);
                 }
 
                 animated_path_length = 1;

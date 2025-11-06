@@ -56,7 +56,7 @@ size_t grid_neighbors(Grid *grid, Point p, Point out[4])
 {
     size_t count = 0;
     if (p.x > 0 && grid->grid[grid_index(grid, (Point){p.x - 1, p.y})] !=
-                       TERRAIN_WATER_SHALLOW)
+                       TERRAIN_WATER_DEEP)
     {
         out[count].x = p.x - 1;
         out[count].y = p.y;
@@ -65,7 +65,7 @@ size_t grid_neighbors(Grid *grid, Point p, Point out[4])
 
     if (p.x < grid->dimensions.x - 1 &&
         grid->grid[grid_index(grid, (Point){p.x + 1, p.y})] !=
-            TERRAIN_WATER_SHALLOW)
+            TERRAIN_WATER_DEEP)
     {
         out[count].x = p.x + 1;
         out[count].y = p.y;
@@ -73,7 +73,7 @@ size_t grid_neighbors(Grid *grid, Point p, Point out[4])
     }
 
     if (p.y > 0 && grid->grid[grid_index(grid, (Point){p.x, p.y - 1})] !=
-                       TERRAIN_WATER_SHALLOW)
+                       TERRAIN_WATER_DEEP)
     {
         out[count].x = p.x;
         out[count].y = p.y - 1;
@@ -82,7 +82,7 @@ size_t grid_neighbors(Grid *grid, Point p, Point out[4])
 
     if (p.y < grid->dimensions.y - 1 &&
         grid->grid[grid_index(grid, (Point){p.x, p.y + 1})] !=
-            TERRAIN_WATER_SHALLOW)
+            TERRAIN_WATER_DEEP)
     {
         out[count].x = p.x;
         out[count].y = p.y + 1;
