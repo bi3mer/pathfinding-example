@@ -98,24 +98,14 @@ bool astar_step(AStarState *state)
     Point neighbors[4];
     const size_t num_neighbors =
         grid_neighbors(state->grid, node.point, neighbors);
-
     for (size_t i = 0; i < num_neighbors; ++i)
     {
         const size_t id = grid_index(state->grid, neighbors[i]);
-        const float tc = terrain_cost(state->grid->grid[id]);
-        const float cost = tc + state->cost_so_far[node_id];
-
-        if (state->came_from[id].x == -1 || cost < state->cost_so_far[id])
+        if (state->came_from[id].x == -1)
         {
             state->came_from[id] = node.point;
-            state->cost_so_far[id] = cost;
 
-            const float priority =
-                cost + heuristic(state->heuristic, neighbors[i], state->tgt);
-
-            AStarNode *n = da_priority_insert((void **)&state->queue, priority,
-                                              astar_compare);
-            n->priority = priority;
+            AStarNode *n = da_append((void **)&state->queue);
             n->point = neighbors[i];
         }
     }
