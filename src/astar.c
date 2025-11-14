@@ -75,7 +75,7 @@ bool astar_step(AStarState *state)
 
     AStarNode node = state->queue[0];
     da_pop_start(state->queue);
-    const size_t node_id = grid_index(state->grid, node.point);
+    const size_t parent_id = grid_index(state->grid, node.point);
 
     if (point_equals(node.point, state->tgt))
     {
