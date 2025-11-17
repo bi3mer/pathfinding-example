@@ -15,10 +15,10 @@ cmake --build . --parallel
 
 ## Examples
 ### Depth-First Search
-![](./media/dfs.mp4)
+![](./media/dfs.gif)
 
 ### Breadth-First Search
-![](./media/bfs.mp4)
+![](./media/bfs.gif)
 
 ### A*
-![](./media/a-star.mp4)
+![](./media/a-star.gif)
