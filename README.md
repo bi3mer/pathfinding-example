@@ -17,10 +17,8 @@ cmake --build . --parallel
 ### Depth-First Search
 ~[](./media/dfs.mp4)
 
-
 ### Breadth-First Search
 ~[](./media/bfs.mp4)
-
 
 ### A*
 ~[](./media/a-star.mp4)
