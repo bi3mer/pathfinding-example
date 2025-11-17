@@ -70,6 +70,8 @@ bool dfs_step(PathfindingState *state)
         Point *new_p = da_append((void **)&state->path);
         *new_p = state->src;
 
+        da_reverse(state->path);
+
         return false; // done processing
     }
 
@@ -123,6 +125,8 @@ bool bfs_step(PathfindingState *state)
 
         Point *new_p = da_append((void **)&state->path);
         *new_p = state->src;
+
+        da_reverse(state->path);
 
         return false; // done processing
     }

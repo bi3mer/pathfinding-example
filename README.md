@@ -1,55 +1,26 @@
 # Pathfinding Example
 
+Example implementing of [breadth-first search](https://en.wikipedia.org/wiki/Breadth-first_search), [depth-first search](https://en.wikipedia.org/wiki/Depth-first_search), and [A*](https://en.wikipedia.org/wiki/A*_search_algorithm). Terrain is generated with [perlin noise](https://en.wikipedia.org/wiki/Perlin_noise) and visualized with [raylib](https://www.raylib.com/index.html).
 
-## Set up
+## Set Up and Running
 
 ```
 mkdir build
 cd build
-```
-
-**Configure**
-
-Debug build:
-
-```
-cmake -DCMAKE_BUILD_TYPE=Debug ..
-```
-
-Release build:
-
-```
-cmake -DCMAKE_BUILD_TYPE=Release ..
-```
-
-**Build**
-
-```
+cmake ..
 cmake --build . --parallel
-```
-
-**Run**
-
-```
 ./pathfinding-example
 ```
 
-## Stats
 
-**seed = 1, grid_size = 20**
+## Examples
+### Depth-First Search
+~[](./media/dfs.mp4)
 
-|  | Nodes Explored | Path length | Path Cost |
-| :--: |  :------------- | :-- | :-- |
-| DFS | 220 | 105 | 1165 |
-| BFS | 368 | 21 | 64 |
-| UCS |  |  |   |
-| A*  |   |  |  |
 
-**seed = 1, grid_size = 40**
+### Breadth-First Search
+~[](./media/bfs.mp4)
 
-| | Nodes Explored | Path length | Path Cost |
-| :--: |  :------------- | :-- | :-- |
-| DFS | 1240 | 615 | 9248 |
-| BFS | 1568 | 61 | 839 |
-| UCS |  |  |   |
-| A*  |   |  |  |
+
+### A*
+~[](./media/a-star.mp4)
